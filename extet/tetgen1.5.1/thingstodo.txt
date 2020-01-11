@@ -1,0 +1,5 @@
+// things to remember for windows installation
+
+-- download and install the latest version of visual studio (https://visualstudio.microsoft.com/vs/community/)
+-- install cmake
+-- install make (from gnu)

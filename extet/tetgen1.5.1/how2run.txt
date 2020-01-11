@@ -1,0 +1,3 @@
+copy mesh to tetgen.exe dir
+cd into tetgen.exe dir
+tetgen.exe -pq1.2 -fACVO -a1.0 mesh_filename.{ply,poly,off}

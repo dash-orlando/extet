@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\flobo\Documents\Gits\PD3D\geovar\tetgen1.5.1\build\CMakeFiles\fd357dcf29d3341e58c7e2546e85589d\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{F3498674-1CBE-3705-9918-DFF0DF5D5F49}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

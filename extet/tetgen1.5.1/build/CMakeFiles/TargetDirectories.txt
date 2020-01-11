@@ -1,0 +1,4 @@
+C:/Users/flobo/Documents/Gits/PD3D/geovar/tetgen1.5.1/build/CMakeFiles/tetgen.dir
+C:/Users/flobo/Documents/Gits/PD3D/geovar/tetgen1.5.1/build/CMakeFiles/tet.dir
+C:/Users/flobo/Documents/Gits/PD3D/geovar/tetgen1.5.1/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/flobo/Documents/Gits/PD3D/geovar/tetgen1.5.1/build/CMakeFiles/ZERO_CHECK.dir
