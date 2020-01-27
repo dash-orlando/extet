@@ -16,6 +16,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "tetgen.h"
+#include <iostream>
 
 //// io_cxx ///////////////////////////////////////////////////////////////////
 ////                                                                       ////
@@ -86,12 +87,14 @@ bool tetgenio::load_node_call(FILE* infile, int markers, int uvflag,
     } // if (useindex)
     if (*stringptr == '\0') {
       printf("Error:  Point %d has no x coordinate.\n", firstnumber + i);
+      std::cout << std::flush;
       break;
     }
     x = (REAL) strtod(stringptr, &stringptr);
     stringptr = findnextnumber(stringptr);
     if (*stringptr == '\0') {
       printf("Error:  Point %d has no y coordinate.\n", firstnumber + i);
+      std::cout << std::flush;
       break;
     }
     y = (REAL) strtod(stringptr, &stringptr);
@@ -99,6 +102,7 @@ bool tetgenio::load_node_call(FILE* infile, int markers, int uvflag,
       stringptr = findnextnumber(stringptr);
       if (*stringptr == '\0') {
         printf("Error:  Point %d has no z coordinate.\n", firstnumber + i);
+        std::cout << std::flush;
         break;
       }
       z = (REAL) strtod(stringptr, &stringptr);
@@ -133,29 +137,34 @@ bool tetgenio::load_node_call(FILE* infile, int markers, int uvflag,
       stringptr = findnextnumber(stringptr);
       if (*stringptr == '\0') {
         printf("Error:  Point %d has no uv[0].\n", firstnumber + i);
+        std::cout << std::flush;
         break;
       }
       pointparamlist[i].uv[0] = (REAL) strtod(stringptr, &stringptr);
       stringptr = findnextnumber(stringptr);
       if (*stringptr == '\0') {
         printf("Error:  Point %d has no uv[1].\n", firstnumber + i);
+        std::cout << std::flush;
         break;
       }
       pointparamlist[i].uv[1] = (REAL) strtod(stringptr, &stringptr);
       stringptr = findnextnumber(stringptr);
       if (*stringptr == '\0') {
         printf("Error:  Point %d has no tag.\n", firstnumber + i);
+        std::cout << std::flush;
         break;
       }
       pointparamlist[i].tag = (int) strtol (stringptr, &stringptr, 0);
       stringptr = findnextnumber(stringptr);
       if (*stringptr == '\0') {
         printf("Error:  Point %d has no type.\n", firstnumber + i);
+        std::cout << std::flush;
         break;
       }
       pointparamlist[i].type = (int) strtol (stringptr, &stringptr, 0);
       if ((pointparamlist[i].type < 0) || (pointparamlist[i].type > 2)) {
         printf("Error:  Point %d has an invalid type.\n", firstnumber + i);
+        std::cout << std::flush;
         break;
       }
     }
@@ -206,9 +215,11 @@ bool tetgenio::load_node(char* filebasename)
   infile = fopen(innodefilename, "r");
   if (infile == (FILE *) NULL) {
     printf("  Cannot access file %s.\n", innodefilename);
+    std::cout << std::flush;
     return false;
   }
-  printf("Opening %s.\n", innodefilename); 
+  printf("Opening %s.\n", innodefilename);
+  std::cout << std::flush;
 
   // Set initial flags.
   mesh_dim = 3;
@@ -282,6 +293,7 @@ bool tetgenio::load_edge(char* filebasename)
   infile = fopen(inedgefilename, "r");
   if (infile != (FILE *) NULL) {
     printf("Opening %s.\n", inedgefilename);
+    std::cout << std::flush;
   } else {
     //printf("  Cannot access file %s.\n", inedgefilename);
     return false;
@@ -316,12 +328,14 @@ bool tetgenio::load_edge(char* filebasename)
       if (*stringptr == '\0') {
         printf("Error:  Edge %d is missing vertex %d in %s.\n",
                i + firstnumber, j + 1, inedgefilename);
+        std::cout << std::flush;
         terminatetetgen(NULL, 1);
       }
       corner = (int) strtol(stringptr, &stringptr, 0);
       if (corner < firstnumber || corner >= numberofpoints + firstnumber) {
         printf("Error:  Edge %d has an invalid vertex index.\n",
                i + firstnumber);
+        std::cout << std::flush;
         terminatetetgen(NULL, 1);
       }
       edgelist[index++] = corner;
@@ -364,6 +378,7 @@ bool tetgenio::load_face(char* filebasename)
   infile = fopen(infilename, "r");
   if (infile != (FILE *) NULL) {
     printf("Opening %s.\n", infilename);
+    std::cout << std::flush;
   } else {
     return false;
   }
@@ -404,12 +419,14 @@ bool tetgenio::load_face(char* filebasename)
       if (*stringptr == '\0') {
         printf("Error:  Face %d is missing vertex %d in %s.\n",
                i + firstnumber, j + 1, infilename);
+        std::cout << std::flush;
         terminatetetgen(NULL, 1);
       }
       corner = (int) strtol(stringptr, &stringptr, 0);
       if (corner < firstnumber || corner >= numberofpoints + firstnumber) {
         printf("Error:  Face %d has an invalid vertex index.\n",
                i + firstnumber);
+        std::cout << std::flush;
         terminatetetgen(NULL, 1);
       }
       trifacelist[index++] = corner;
@@ -460,6 +477,7 @@ bool tetgenio::load_tet(char* filebasename)
   infile = fopen(infilename, "r");
   if (infile != (FILE *) NULL) {
     printf("Opening %s.\n", infilename);
+    std::cout << std::flush;
   } else {
     return false;
   }
@@ -470,6 +488,7 @@ bool tetgenio::load_tet(char* filebasename)
   numberoftetrahedra = (int) strtol (stringptr, &stringptr, 0);
   if (numberoftetrahedra <= 0) {
     printf("Error:  Invalid number of tetrahedra.\n");
+    std::cout << std::flush;
     fclose(infile);
     return false;
   }
@@ -486,8 +505,9 @@ bool tetgenio::load_tet(char* filebasename)
     numberoftetrahedronattributes = (int) strtol(stringptr, &stringptr, 0);
   }
   if (numberofcorners != 4 && numberofcorners != 10) {
-    printf("Error:  Wrong number of corners %d (should be 4 or 10).\n", 
-           numberofcorners);
+      printf("Error:  Wrong number of corners %d (should be 4 or 10).\n",
+          numberofcorners);
+    std::cout << std::flush;
     fclose(infile);
     return false;
   }
@@ -517,12 +537,14 @@ bool tetgenio::load_tet(char* filebasename)
       if (*stringptr == '\0') {
         printf("Error:  Tetrahedron %d is missing vertex %d in %s.\n",
                i + firstnumber, j + 1, infilename);
+        std::cout << std::flush;
         terminatetetgen(NULL, 1);
       }
       corner = (int) strtol(stringptr, &stringptr, 0);
       if (corner < firstnumber || corner >= numberofpoints + firstnumber) {
         printf("Error:  Tetrahedron %d has an invalid vertex index.\n",
                i + firstnumber);
+        std::cout << std::flush;
         terminatetetgen(NULL, 1);
       }
       tetrahedronlist[index++] = corner;
@@ -567,6 +589,7 @@ bool tetgenio::load_vol(char* filebasename)
   infile = fopen(infilename, "r");
   if (infile != (FILE *) NULL) {
     printf("Opening %s.\n", infilename);
+    std::cout << std::flush;
   } else {
     return false;
   }
@@ -579,6 +602,7 @@ bool tetgenio::load_vol(char* filebasename)
     strcat(infilename, ".ele");
     printf("Warning:  %s and %s disagree on number of tetrahedra.\n",
            inelefilename, infilename);
+    std::cout << std::flush;
     fclose(infile);
     return false;
   }
@@ -627,6 +651,7 @@ bool tetgenio::load_var(char* filebasename)
   infile = fopen(varfilename, "r");
   if (infile != (FILE *) NULL) {
     printf("Opening %s.\n", varfilename);
+    std::cout << std::flush;
   } else {
     return false;
   }
@@ -653,6 +678,7 @@ bool tetgenio::load_var(char* filebasename)
       if (*stringptr == '\0') {
         printf("Error:  facet constraint %d has no facet marker.\n",
                firstnumber + i);
+        std::cout << std::flush;
         break;
       } else {
         facetconstraintlist[index++] = (REAL) strtod(stringptr, &stringptr);
@@ -661,6 +687,7 @@ bool tetgenio::load_var(char* filebasename)
       if (*stringptr == '\0') {
         printf("Error:  facet constraint %d has no maximum area bound.\n",
                firstnumber + i);
+        std::cout << std::flush;
         break;
       } else {
         facetconstraintlist[index++] = (REAL) strtod(stringptr, &stringptr);
@@ -4245,6 +4272,7 @@ void tetgenmesh::makeindex2pointmap(point*& idx2verlist)
 
   if (b->verbose > 1) {
     printf("  Constructing mapping from indices to points.\n");
+    std::cout << std::flush;
   }
 
   idx2verlist = new point[points->items + 1];
@@ -4280,6 +4308,7 @@ void tetgenmesh::makepoint2submap(memorypool* pool, int*& idx2faclist,
 
   if (b->verbose > 1) {
     printf("  Making a map from points to subfaces.\n");
+    std::cout << std::flush;
   }
 
   // Initialize 'idx2faclist'.
@@ -4607,6 +4636,7 @@ void tetgenmesh::initializepools()
   if (b->verbose) {
     printf("  Initializing memorypools.\n");
     printf("  tetrahedron per block: %d.\n", b->tetrahedraperblock);
+    std::cout << std::flush;
   }
 
   inittables();
@@ -4715,6 +4745,7 @@ void tetgenmesh::initializepools()
 
   if (b->verbose) {
     printf("  Size of a point: %d bytes.\n", points->itembytes);
+    std::cout << std::flush;
   }
 
   // Initialize the infinite vertex.
@@ -4798,6 +4829,7 @@ void tetgenmesh::initializepools()
   if (b->verbose) {
     printf("  Size of a tetrahedron: %d (%d) bytes.\n", elesize,
            tetrahedrons->itembytes);
+    std::cout << std::flush;
   }
 
   if (b->plc || b->refine) { // if (b->useshelles) {
@@ -4831,6 +4863,7 @@ void tetgenmesh::initializepools()
     if (b->verbose) {
       printf("  Size of a shellface: %d (%d) bytes.\n", shsize,
              subfaces->itembytes);
+      std::cout << std::flush;
     }
 
     // Initialize the pool of subsegments. The subsegment's record is same
@@ -9596,6 +9629,7 @@ int tetgenmesh::flipnm_post(triface* abtets, int n, int nn, int abedgepivot,
       if (fc->unflip) {
         if (b->verbose > 2) {
           printf("      Recover a 2-to-3 flip at f[%d].\n", t);
+          std::cout << std::flush;
         }
         // 'abtets[(t-1)%i]' is the tet [a,b,e,d] in current Star(ab), i.e.,
         //   it is created by a 2-to-3 flip [a,b,c] => [e,d].
@@ -9632,6 +9666,7 @@ int tetgenmesh::flipnm_post(triface* abtets, int n, int nn, int abedgepivot,
         if (b->verbose > 2) {
           printf("      Recover a %d-to-m flip at e[%d] of f[%d].\n", n1, 
                  edgepivot, t);
+          std::cout << std::flush;
         }
         // Recover the flipped edge ([c,b] or [a,c]).
         // abtets[(t - 1 + i) % i] is [a,b,e,d], i.e., the tet created by
@@ -9691,6 +9726,7 @@ int tetgenmesh::flipnm_post(triface* abtets, int n, int nn, int abedgepivot,
       } // if (!unflip)
       if (b->verbose > 2) {
         printf("      Release %d spaces at f[%d].\n", n1, i);
+        std::cout << std::flush;
       }
       delete [] tmpabtets;
     }
@@ -9732,6 +9768,7 @@ int tetgenmesh::insertpoint(point insertpt, triface *searchtet, face *splitsh,
 
   if (b->verbose > 2) {
     printf("      Insert point %d\n", pointmark(insertpt));
+    std::cout << std::flush;
   }
 
   // Locate the point.
@@ -10280,6 +10317,7 @@ int tetgenmesh::insertpoint(point insertpt, triface *searchtet, face *splitsh,
                printf("        Cut tet (%d, %d, %d, %d)\n", 
                       pointmark(org(neightet)), pointmark(dest(neightet)),
                       pointmark(apex(neightet)), pointmark(oppo(neightet)));
+               std::cout << std::flush;
             }
             uninfect(neightet);
             unmarktest(neightet);
@@ -11018,6 +11056,7 @@ int tetgenmesh::insertpoint(point insertpt, triface *searchtet, face *splitsh,
           if (b->verbose > 1) {
             printf("    Point #%d is non-regular after the insertion of #%d.\n",
                    pointmark(*pts), pointmark(insertpt));
+            std::cout << std::flush;
           }
           setpointtype(*pts, NREGULARVERTEX);
           nonregularcount++;
@@ -11950,6 +11989,7 @@ int tetgenmesh::incrementalflip(point newpt, int hullflag, flipconstraints *fc)
 
   if (b->verbose > 2) {
     printf("      Lawson flip (%ld faces).\n", flippool->items);
+    std::cout << std::flush;
   }
 
   if (hullflag) {
@@ -12184,6 +12224,7 @@ void tetgenmesh::initialdelaunay(point pa, point pb, point pc, point pd)
   if (b->verbose > 2) {
     printf("      Create init tet (%d, %d, %d, %d)\n", pointmark(pa),
            pointmark(pb), pointmark(pc), pointmark(pd));
+    std::cout << std::flush;
   }
 
   // Create the first tetrahedron.
@@ -12280,14 +12321,16 @@ void tetgenmesh::incrementaldelaunay(clock_t& tv)
 
   if (b->no_sort) {
     if (b->verbose) {
-      printf("  Using the input order.\n"); 
+      printf("  Using the input order.\n");
+      std::cout << std::flush;
     }
     for (i = 0; i < in->numberofpoints; i++) {
       permutarray[i] = (point) points->traverse();
     }
   } else {
     if (b->verbose) {
-      printf("  Permuting vertices.\n"); 
+      printf("  Permuting vertices.\n");
+      std::cout << std::flush;
     }
     srand(in->numberofpoints);
     for (i = 0; i < in->numberofpoints; i++) {
@@ -12297,7 +12340,8 @@ void tetgenmesh::incrementaldelaunay(clock_t& tv)
     }
     if (b->brio_hilbert) { // -b option
       if (b->verbose) {
-        printf("  Sorting vertices.\n"); 
+        printf("  Sorting vertices.\n");
+        std::cout << std::flush;
       }
       hilbert_init(in->mesh_dim);
       brio_multiscale_sort(permutarray, in->numberofpoints, b->brio_threshold, 
@@ -12393,6 +12437,7 @@ void tetgenmesh::incrementaldelaunay(clock_t& tv)
 
   if (b->verbose) {
     printf("  Incrementally inserting vertices.\n");
+    std::cout << std::flush;
   }
   insertvertexflags ivf;
   flipconstraints fc;
@@ -12459,6 +12504,7 @@ void tetgenmesh::incrementaldelaunay(clock_t& tv)
         if (b->verbose) {
           printf("  Point #%d is non-regular, skipped.\n",
                  pointmark(permutarray[i]));
+          std::cout << std::flush;
         }
         setpointtype(permutarray[i], NREGULARVERTEX);
         nonregularcount++;
@@ -12732,6 +12778,7 @@ long tetgenmesh::lawsonflip()
 
   if (b->verbose > 2) {
     printf("      Lawson flip %ld edges.\n", flippool->items);
+    std::cout << std::flush;
   }
 
   while (flipstack != (badface *) NULL) {
@@ -12768,6 +12815,7 @@ long tetgenmesh::lawsonflip()
 
   if (b->verbose > 2) {
     printf("      Performed %ld flips.\n", flipcount);
+    std::cout << std::flush;
   }
 
   return flipcount;
@@ -12817,6 +12865,7 @@ int tetgenmesh::sinsertvertex(point insertpt, face *searchsh, face *splitseg,
 
   if (b->verbose > 2) {
     printf("      Insert facet point %d.\n", pointmark(insertpt));
+    std::cout << std::flush;
   }
 
   if (bowywat == 3) {
@@ -13329,6 +13378,7 @@ int tetgenmesh::sremovevertex(point delpt, face* parentsh, face* parentseg,
     if (b->verbose > 2) {
       printf("      Remove vertex %d from segment [%d, %d].\n", 
              pointmark(delpt), pointmark(pa), pointmark(pb));
+      std::cout << std::flush;
     }
     makeshellface(subsegs, &abseg);
     setshvertices(abseg, pa, pb, NULL);
@@ -13461,6 +13511,7 @@ int tetgenmesh::sremovevertex(point delpt, face* parentsh, face* parentseg,
     // p is inside the surface.
     if (b->verbose > 2) {
       printf("      Remove vertex %d from surface.\n", pointmark(delpt));
+      std::cout << std::flush;
     }
     // Let 'delpt' be its apex.
     senextself(*parentsh);
@@ -13568,6 +13619,7 @@ int tetgenmesh::sremovevertex(point delpt, face* parentsh, face* parentseg,
 
   if (b->verbose > 2) {
     printf("      Created %ld new subfaces.\n", caveshbdlist->objects);
+    std::cout << std::flush;
   }
 
 
@@ -13830,6 +13882,7 @@ enum tetgenmesh::interresult tetgenmesh::sscoutsegment(face *searchsh,
   if (b->verbose > 2) {
     printf("      Scout segment (%d, %d).\n", pointmark(startpt),
            pointmark(endpt));
+    std::cout << std::flush;
   }
   len = distance(startpt, endpt);
 
@@ -14146,10 +14199,13 @@ int tetgenmesh::triangulate(int shmark, arraypool* ptlist, arraypool* conlist,
   if (b->verbose > 2) {
     printf("      f%d:  %ld vertices, %ld segments", shmark, ptlist->objects,
            conlist->objects);
+    std::cout << std::flush;
     if (holes > 0) {
       printf(", %d holes", holes);
+      std::cout << std::flush;
     }
     printf(".\n");
+    std::cout << std::flush;
   }
 
   if (ptlist->objects < 2l) {
@@ -14383,6 +14439,7 @@ void tetgenmesh::unifysegments()
 
   if (b->verbose > 1) {
     printf("  Unifying segments.\n");
+    std::cout << std::flush;
   }
   // The limit dihedral angle that two facets are not overlapping.
   ang_tol = b->facet_overlap_ang_tol / 180.0 * PI;
@@ -15055,6 +15112,7 @@ void tetgenmesh::meshsurface()
   if (b->verbose) {
     printf("  %ld (%ld) subfaces (segments).\n", subfaces->items, 
            subsegs->items);
+    std::cout << std::flush;
   }
 
   // The total number of iunput segments.
@@ -15108,6 +15166,7 @@ void tetgenmesh::interecursive(shellface** subfacearray, int arraysize,
     printf("      Recur %d faces. Bbox (%g, %g, %g),(%g, %g, %g). %s-axis\n",
            arraysize, bxmin, bymin, bzmin, bxmax, bymax, bzmax,
            axis == 0 ? "x" : (axis == 1 ? "y" : "z"));
+    std::cout << std::flush;
   }
     
   leftarray = new shellface*[arraysize];
@@ -15188,6 +15247,7 @@ void tetgenmesh::interecursive(shellface** subfacearray, int arraysize,
   } else {
     if (b->verbose > 1) {
       printf("  Checking intersecting faces.\n");
+      std::cout << std::flush;
     }
     // Perform a brute-force compare on the set.
     for (i = 0; i < arraysize; i++) {
@@ -15342,6 +15402,7 @@ void tetgenmesh::makesegmentendpointsmap()
 
   if (b->verbose > 0) {
     printf("  Creating the segment-endpoints map.\n");
+    std::cout << std::flush;
   }
 
   segptlist = new arraypool(2 * sizeof(point), 10);
@@ -15379,6 +15440,7 @@ void tetgenmesh::makesegmentendpointsmap()
 
   if (b->verbose) {
     printf("  Found %ld segments.\n", segptlist->objects);
+    std::cout << std::flush;
   }
 
   segmentendpointslist = new point[segptlist->objects * 2];
@@ -15618,6 +15680,7 @@ enum tetgenmesh::interresult tetgenmesh::scoutsegment(point startpt,point endpt,
 
   if (b->verbose > 2) {
     printf("      Scout seg (%d, %d).\n",pointmark(startpt),pointmark(endpt));
+    std::cout << std::flush;
   }
 
   point2tetorg(startpt, *searchtet);
@@ -16416,6 +16479,7 @@ bool tetgenmesh::formcavity(triface* searchtet, arraypool* missingshs,
 
   if (b->verbose > 2) {
     printf("      Form the cavity of a missing region.\n"); 
+    std::cout << std::flush;
   }
   // Mark this edge to avoid testing it later.
   markedge(*searchtet);
@@ -16610,6 +16674,7 @@ bool tetgenmesh::formcavity(triface* searchtet, arraypool* missingshs,
   if (b->verbose > 2) {
     printf("      Formed cavity: %ld (%ld) cross tets (edges).\n", 
            crosstets->objects, crossedges->objects);
+    std::cout << std::flush;
   }
 
   // Collect the top and bottom faces and the middle vertices. Since all top
@@ -16713,6 +16778,7 @@ void tetgenmesh::delaunizecavity(arraypool *cavpoints, arraypool *cavfaces,
   if (b->verbose > 2) {
     printf("      Delaunizing cavity: %ld points, %ld faces.\n", 
            cavpoints->objects, cavfaces->objects);
+    std::cout << std::flush;
   }
   // Remember the current number of crossing tets. It may be enlarged later.
   baknum = crosstets->objects;
@@ -16774,6 +16840,7 @@ void tetgenmesh::delaunizecavity(arraypool *cavpoints, arraypool *cavfaces,
   if (b->verbose > 2) {
     printf("      Identifying %ld boundary faces of the cavity.\n", 
            cavfaces->objects);
+    std::cout << std::flush;
   }
 
   while (1) {
@@ -16814,6 +16881,7 @@ void tetgenmesh::delaunizecavity(arraypool *cavpoints, arraypool *cavfaces,
       if (b->verbose > 2) {
         printf("      Enlarging the cavity. %ld missing bdry faces\n", 
                misfaces->objects);
+        std::cout << std::flush;
       }
 
       // Removing all temporary subfaces.
@@ -17164,6 +17232,7 @@ bool tetgenmesh::fillcavity(arraypool* topshells, arraypool* botshells,
     if (mflag) {
       if (b->verbose > 2) {
         printf("      Found %ld middle subfaces.\n", midfaces->objects);
+        std::cout << std::flush;
       }
       face oldsh, newsh, casout, casin, neighsh;
 
@@ -17341,6 +17410,7 @@ void tetgenmesh::carvecavity(arraypool *crosstets, arraypool *topnewtets,
 
   if (b->verbose > 2) {
     printf("      Carve cavity: %ld old tets.\n", crosstets->objects);
+    std::cout << std::flush;
   }
 
   // First process subfaces and segments which are adjacent to the cavity.
@@ -17672,6 +17742,7 @@ void tetgenmesh::flipcertify(triface *chkface,badface **pqueue,point plane_pa,
               printf("      A locally non-Delanay face (%d, %d, %d)-%d,%d\n", 
                      pointmark(p[0]), pointmark(p[1]), pointmark(p[2]), 
                      pointmark(p[3]), pointmark(p[4]));
+              std::cout << std::flush;
             }
             parybf = (badface *) flippool->alloc();
             parybf->key = 0.;  // tau = 0, do immediately.
@@ -17714,6 +17785,7 @@ void tetgenmesh::flipcertify(triface *chkface,badface **pqueue,point plane_pa,
     if (b->verbose > 2) {
       printf("      Insert face (%d, %d, %d) - %d, %d\n", pointmark(p[0]),
         pointmark(p[1]), pointmark(p[2]), pointmark(p[3]), pointmark(p[4]));
+      std::cout << std::flush;
     }
     
     parybf = (badface *) flippool->alloc();
@@ -17835,6 +17907,7 @@ void tetgenmesh::flipinsertfacet(arraypool *crosstets, arraypool *toppoints,
 
   if (b->verbose > 1) {
     printf("    Found %ld crossing faces.\n", crossfaces->objects);
+    std::cout << std::flush;
   }
 
   for (i = 0; i < crosstets->objects; i++) {
@@ -17884,6 +17957,7 @@ void tetgenmesh::flipinsertfacet(arraypool *crosstets, arraypool *toppoints,
                    pointmark(bface.forg), pointmark(bface.fdest),
                    pointmark(bface.fapex), pointmark(bface.foppo),
                    pointmark(bface.noppo), bface.key);
+            std::cout << std::flush;
           }
           flipflag = 0;
 
@@ -18033,6 +18107,7 @@ void tetgenmesh::flipinsertfacet(arraypool *crosstets, arraypool *toppoints,
                      pointmark(bface.forg), pointmark(bface.fdest),
                      pointmark(bface.fapex), pointmark(bface.foppo),
                      pointmark(bface.noppo), bface.key);
+              std::cout << std::flush;
             }
           } // if (convcount == 1)
 
@@ -18092,6 +18167,7 @@ void tetgenmesh::flipinsertfacet(arraypool *crosstets, arraypool *toppoints,
   if (b->verbose > 2) {
     printf("      Total %ld flips. f23(%ld), f32(%ld), f44(%ld).\n",
            totalfcount, f23count, f32count, f44count);
+    std::cout << std::flush;
   }
 }
 
@@ -18116,6 +18192,7 @@ int tetgenmesh::insertpoint_cdt(point newpt, triface *searchtet, face *splitsh,
 
   if (b->verbose > 2) {
     printf("      Insert point %d into CDT\n", pointmark(newpt));
+    std::cout << std::flush;
   }
 
   if (!insertpoint(newpt, searchtet, NULL, NULL, ivf)) {
@@ -18271,6 +18348,7 @@ void tetgenmesh::refineregion(face &splitsh, arraypool *cavpoints,
     printf("      Refining region at edge (%d, %d, %d).\n",
            pointmark(sorg(splitsh)), pointmark(sdest(splitsh)),
            pointmark(sapex(splitsh)));
+    std::cout << std::flush;
   }
 
   // Add the Steiner point at the barycenter of the face.
@@ -18383,6 +18461,7 @@ void tetgenmesh::refineregion(face &splitsh, arraypool *cavpoints,
 
   if (b->verbose > 2) {
     printf("      Added %ld Steiner points.\n", points->items - baknum);
+    std::cout << std::flush;
   }
 }
 
@@ -18469,6 +18548,7 @@ void tetgenmesh::constrainedfacets()
     if (b->verbose > 1) {
       printf("    Recovering facet #%d: %ld subfaces.\n", facetcount + 1, 
              tg_facfaces->objects);
+      std::cout << std::flush;
     }
     facetcount++;
 
@@ -18663,6 +18743,7 @@ void tetgenmesh::constraineddelaunay(clock_t& tv)
 
   if (b->verbose) {
     printf("  Delaunizing segments.\n");
+    std::cout << std::flush;
   }
 
   checksubsegflag = 1;
@@ -18685,13 +18766,15 @@ void tetgenmesh::constraineddelaunay(clock_t& tv)
   delaunizesegments();
 
   if (b->verbose) {
-    printf("  Inserted %ld Steiner points.\n", st_segref_count); 
+    printf("  Inserted %ld Steiner points.\n", st_segref_count);
+    std::cout << std::flush;
   }
 
   tv = clock();
 
   if (b->verbose) {
     printf("  Constraining facets.\n");
+    std::cout << std::flush;
   }
 
   // Subfaces will be introduced.
@@ -18721,18 +18804,23 @@ void tetgenmesh::constraineddelaunay(clock_t& tv)
   if (b->verbose) {
     if (fillregioncount > bakfillregioncount) {
       printf("  Remeshed %ld regions.\n", fillregioncount-bakfillregioncount);
+      std::cout << std::flush;
     }
     if (cavitycount > bakcavitycount) {
       printf("  Remeshed %ld cavities", cavitycount - bakcavitycount);
+      std::cout << std::flush;
       if (cavityexpcount - bakcavityexpcount) {
         printf(" (%ld enlarged)", cavityexpcount - bakcavityexpcount);
+        std::cout << std::flush;
       }
       printf(".\n");
+      std::cout << std::flush;
     }
     if (st_segref_count + st_facref_count - bakseg_ref_count > 0) {
       printf("  Inserted %ld (%ld, %ld) refine points.\n", 
              st_segref_count + st_facref_count - bakseg_ref_count,
              st_segref_count - bakseg_ref_count, st_facref_count);
+      std::cout << std::flush;
     }
   }
 }
@@ -19967,6 +20055,7 @@ int tetgenmesh::recoversegments(arraypool *misseglist, int fullsearch,
            (b->fliplinklevel > 0) ? "fixed" : "auto",
            (b->fliplinklevel > 0) ? b->fliplinklevel : autofliplinklevel,
            subsegstack->objects);
+    std::cout << std::flush;
   }
 
   // Loop until 'subsegstack' is empty.
@@ -19988,6 +20077,7 @@ int tetgenmesh::recoversegments(arraypool *misseglist, int fullsearch,
     if (b->verbose > 2) {
       printf("      Recover segment (%d, %d).\n", pointmark(startpt), 
              pointmark(endpt));
+      std::cout << std::flush;
     }
 
     success = 0;
@@ -20046,10 +20136,12 @@ int tetgenmesh::recoversegments(arraypool *misseglist, int fullsearch,
       if (st_volref_count > bak_inpoly_count) {
         printf("    Add %ld Steiner points in volume.\n", 
                st_volref_count - bak_inpoly_count);
+        std::cout << std::flush;
       }
       if (st_segref_count > bak_segref_count) {
         printf("    Add %ld Steiner points in segments.\n", 
                st_segref_count - bak_segref_count);
+        std::cout << std::flush;
       }
     }
   }
@@ -20255,6 +20347,7 @@ int tetgenmesh::recoversubfaces(arraypool *misshlist, int steinerflag)
            (b->fliplinklevel > 0) ? "fixed" : "auto",
            (b->fliplinklevel > 0) ? b->fliplinklevel : autofliplinklevel,
            subfacstack->objects);
+    std::cout << std::flush;
   }
 
   // Loop until 'subfacstack' is empty.
@@ -20273,6 +20366,7 @@ int tetgenmesh::recoversubfaces(arraypool *misshlist, int steinerflag)
     if (b->verbose > 2) {
       printf("      Recover subface (%d, %d, %d).\n",pointmark(sorg(searchsh)),
              pointmark(sdest(searchsh)), pointmark(sapex(searchsh)));
+      std::cout << std::flush;
     }
 
     // The three edges of the face need to be existed first.
@@ -20349,6 +20443,7 @@ int tetgenmesh::recoversubfaces(arraypool *misshlist, int steinerflag)
             if (b->verbose > 2) {
               printf("      Add a Steiner point in subedge (%d, %d).\n",
                      pointmark(startpt), pointmark(endpt));
+              std::cout << std::flush;
             }
             makepoint(&steinerpt, FREEFACETVERTEX);
             for (j = 0; j < 3; j++) {
@@ -20426,6 +20521,7 @@ int tetgenmesh::recoversubfaces(arraypool *misshlist, int steinerflag)
           if (b->verbose > 2) {
             printf("      Add a Steiner point in subface (%d, %d, %d).\n",
                    pointmark(startpt), pointmark(endpt), pointmark(apexpt));
+            std::cout << std::flush;
           }
           makepoint(&steinerpt, FREEFACETVERTEX);
           for (j = 0; j < 3; j++) {
@@ -20641,6 +20737,7 @@ int tetgenmesh::getedge(point e1, point e2, triface *tedge)
 
   if (b->verbose > 2) {
     printf("      Get edge from %d to %d.\n", pointmark(e1), pointmark(e2));
+    std::cout << std::flush;
   }
 
   // Quickly check if 'tedge' is just this edge.
@@ -20873,22 +20970,26 @@ int tetgenmesh::removevertexbyflips(point steinerpt)
     if (b->verbose > 2) {
       printf("      Removing Steiner point %d in segment (%d, %d).\n",
              pointmark(steinerpt), pointmark(lpt), pointmark(rpt));
+      std::cout << std::flush;
 
     }
   } else if (vt == FREEFACETVERTEX) {
     if (b->verbose > 2) {
       printf("      Removing Steiner point %d in facet.\n",
              pointmark(steinerpt));
+      std::cout << std::flush;
     }
   } else if (vt == FREEVOLVERTEX) {
     if (b->verbose > 2) {
       printf("      Removing Steiner point %d in volume.\n",
              pointmark(steinerpt));
+      std::cout << std::flush;
     }
   } else if (vt == VOLVERTEX) {
     if (b->verbose > 2) {
       printf("      Removing a point %d in volume.\n",
              pointmark(steinerpt));
+      std::cout << std::flush;
     }
   } else {
     // It is not a Steiner point.
@@ -21503,6 +21604,7 @@ int tetgenmesh::suppressbdrysteinerpoint(point steinerpt)
     if (b->verbose > 2) {
       printf("      Suppressing Steiner point %d in segment (%d, %d).\n",
              pointmark(steinerpt), pointmark(lpt), pointmark(rpt));
+      std::cout << std::flush;
     }
     // Get all subfaces at the left segment [lpt, steinerpt].
     spivot(leftseg, parentsh);
@@ -21528,6 +21630,7 @@ int tetgenmesh::suppressbdrysteinerpoint(point steinerpt)
     if (b->verbose > 2) {
       printf("      Suppressing Steiner point %d from facet.\n",
              pointmark(steinerpt));
+      std::cout << std::flush;
     }
     sdecode(point2sh(steinerpt), parentsh);
     // A facet Steiner point. There are exactly two sectors.
@@ -21979,6 +22082,7 @@ int tetgenmesh::suppressbdrysteinerpoint(point steinerpt)
   if (steinercount > 0) {
     if (b->verbose > 2) {
       printf("      Added %d interior Steiner points.\n", steinercount);
+      std::cout << std::flush;
     }
   }
 
@@ -22029,6 +22133,7 @@ int tetgenmesh::suppresssteinerpoints()
   if (suppcount > 0) {
     if (b->verbose) {
       printf("  Suppressed %d boundary Steiner points.\n", suppcount);
+      std::cout << std::flush;
     }
   }
 
@@ -22049,6 +22154,7 @@ int tetgenmesh::suppresssteinerpoints()
   if (remcount > 0) {
     if (b->verbose) {
       printf("  Removed %d interior Steiner points.\n", remcount);
+      std::cout << std::flush;
     }
   }
 
@@ -22138,7 +22244,8 @@ int tetgenmesh::suppresssteinerpoints()
 
     if (b->verbose) {
       if (smtcount > 0) {
-        printf("  Smoothed %d Steiner points.\n", smtcount); 
+        printf("  Smoothed %d Steiner points.\n", smtcount);
+        std::cout << std::flush;
       }
     }
   } // -Y2
@@ -22170,11 +22277,13 @@ void tetgenmesh::recoverboundary(clock_t& tv)
 
   if (!b->quiet) {
     printf("Recovering boundaries...\n");
+    std::cout << std::flush;
   }
 
 
   if (b->verbose) {
     printf("  Recovering segments.\n");
+    std::cout << std::flush;
   }
 
   // Segments will be introduced.
@@ -22240,6 +22349,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
   if (b->verbose) {
     printf("  %ld (%ld) segments are recovered (missing).\n", 
            subsegs->items - misseglist->objects, misseglist->objects);
+    std::cout << std::flush;
   }
 
   if (misseglist->objects > 0) {
@@ -22264,6 +22374,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
     if (b->verbose) {
       printf("  %ld (%ld) segments are recovered (missing).\n", 
              subsegs->items - misseglist->objects, misseglist->objects);
+      std::cout << std::flush;
     }
   }
 
@@ -22289,6 +22400,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
     }
     if (b->verbose) {
       printf("  Added %ld Steiner points in volume.\n", st_volref_count);
+      std::cout << std::flush;
     }
   }
 
@@ -22306,9 +22418,11 @@ void tetgenmesh::recoverboundary(clock_t& tv)
 
     if (b->verbose) {
       printf("  Added %ld Steiner points in segments.\n", st_segref_count);
+      std::cout << std::flush;
       if (st_volref_count > bak_inpoly_count) {
         printf("  Added another %ld Steiner points in volume.\n", 
                st_volref_count - bak_inpoly_count);
+        std::cout << std::flush;
       }
     }
   }
@@ -22333,12 +22447,14 @@ void tetgenmesh::recoverboundary(clock_t& tv)
         if (bak_volref_count < st_volref_count) {
           printf("  Suppressed %ld Steiner points in segments.\n", 
                  st_volref_count - bak_volref_count);
+          std::cout << std::flush;
         }
         if ((st_segref_count + (st_volref_count - bak_volref_count)) <
             bak_segref_count) {
           printf("  Removed %ld Steiner points in segments.\n", 
                  bak_segref_count - 
                    (st_segref_count + (st_volref_count - bak_volref_count)));
+          std::cout << std::flush;
         }
       }
     }
@@ -22350,6 +22466,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
 
   if (b->verbose) {
     printf("  Recovering facets.\n");
+    std::cout << std::flush;
   }
 
   // Subfaces will be introduced.
@@ -22413,6 +22530,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
   if (b->verbose) {
     printf("  %ld (%ld) subfaces are recovered (missing).\n", 
            subfaces->items - misshlist->objects, misshlist->objects);
+    std::cout << std::flush;
   }
 
   if (misshlist->objects > 0) {
@@ -22427,6 +22545,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
 
     if (b->verbose) {
       printf("  Added %ld Steiner points in facets.\n", st_facref_count);
+      std::cout << std::flush;
     }
   }
 
@@ -22448,6 +22567,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
       if (st_facref_count < bak_facref_count) {
         printf("  Removed %ld Steiner points in facets.\n", 
                bak_facref_count - st_facref_count);
+        std::cout << std::flush;
       }
     }
     subvertstack->restart();
@@ -22458,6 +22578,7 @@ void tetgenmesh::recoverboundary(clock_t& tv)
     if (b->verbose) {
       printf("  %ld Steiner points remained in boundary.\n",
              bdrysteinerptlist->objects);
+      std::cout << std::flush;
     }
   } // if
 
@@ -22610,6 +22731,7 @@ void tetgenmesh::carveholes()
     if (hole_mesh_loaded) {
       if (b->verbose) {
         printf("  Adding hole tets from the mesh %s\n", b->hole_mesh_filename);
+        std::cout << std::flush;
       }
       int count = 0, hcount = 0, scount = 0;
       int shift = io.firstnumber > 0 ? -1 : 0;
@@ -22676,6 +22798,7 @@ void tetgenmesh::carveholes()
       if (b->verbose) {
         printf("    Added %d hole tets, %d hull tet, %d hole subfaces\n",
                count, hcount, scount);
+        std::cout << std::flush;
       }
     } // if (hole_mesh_loaded)
   }
@@ -22753,6 +22876,7 @@ void tetgenmesh::carveholes()
         if (b->verbose) {
           printf("Warning:  The %d-th region point ", i+1);
           printf("lies in the exterior of the domain.\n");
+          std::cout << std::flush;
         }
         regiontets[i].tet = NULL;
       }
@@ -22891,6 +23015,7 @@ void tetgenmesh::carveholes()
             printf("Warning:  Removed an exterior face (%d, %d, %d) #%d\n",
                    pointmark(sorg(*parysh)), pointmark(sdest(*parysh)),
                    pointmark(sapex(*parysh)), shellmark(*parysh));
+            std::cout << std::flush;
           }
         }
         // Dissolve this subface from face links.
@@ -22923,6 +23048,7 @@ void tetgenmesh::carveholes()
                   printf("Warning:  Removed an exterior segment (%d, %d) #%d\n",
                          pointmark(sorg(checkseg)), pointmark(sdest(checkseg)),
                          shellmark(checkseg));
+                  std::cout << std::flush;
                 }
               }
               shellfacedealloc(subsegs, checkseg.sh);
@@ -22936,6 +23062,7 @@ void tetgenmesh::carveholes()
       } // i
       if (b->verbose) {
         printf("  Deleted %ld subfaces.\n", subfacstack->objects);
+        std::cout << std::flush;
       }
       subfacstack->restart();
     } // if (subfacstack->objects > 0l)
@@ -22950,6 +23077,7 @@ void tetgenmesh::carveholes()
               printf("Warning:  Removed an exterior segment (%d, %d) #%d\n",
                      pointmark(sorg(*paryseg)), pointmark(sdest(*paryseg)),
                      shellmark(*paryseg));
+              std::cout << std::flush;
             }
             shellfacedealloc(subsegs, paryseg->sh);
             delsegcount++;
@@ -22962,6 +23090,7 @@ void tetgenmesh::carveholes()
     if (delsegcount > 0) {
       if (b->verbose) {
         printf("  Deleted %ld segments.\n", delsegcount);
+        std::cout << std::flush;
       }
     }
 
@@ -22999,12 +23128,15 @@ void tetgenmesh::carveholes()
             if (unuverts > (delvertcount + delsteinercount)) {
               printf("  Removed %ld exterior input vertices.\n", 
                      unuverts - delvertcount - delsteinercount);
+              std::cout << std::flush;
             }
             printf("  Removed %ld exterior Steiner vertices.\n", 
                    delsteinercount);
+            std::cout << std::flush;
           } else {
             printf("  Removed %ld exterior input vertices.\n", 
                    unuverts - delvertcount);
+            std::cout << std::flush;
           }
         }
       }
@@ -23160,8 +23292,10 @@ void tetgenmesh::carveholes()
       //assert(regioncount > 0);
       if (regioncount > 1) {
         printf("  Found %d subdomains.\n", regioncount);
+        std::cout << std::flush;
       } else {
         printf("  Found %d domain.\n", regioncount);
+        std::cout << std::flush;
       }
     }
   } // if (b->regionattrib)
@@ -23195,6 +23329,7 @@ void tetgenmesh::carveholes()
     if (sliver_peel_count > 0l) {
       if (b->verbose) {
         printf("  Removed %ld hull slivers.\n", sliver_peel_count);
+        std::cout << std::flush;
       }
     }
     unflipqueue->restart();
@@ -23551,6 +23686,7 @@ void tetgenmesh::reconstructmesh()
               printf("Warning:  Searching subface #%d [%d,%d,%d] mark=%d.\n",
                      i + in->firstnumber, pointmark(p[0]), pointmark(p[1]),
                      pointmark(p[2]), marker);
+              std::cout << std::flush;
             }
             // Search it globally.
             if (search_face(p[0], p[1], p[2], tetloop)) {
@@ -23705,6 +23841,7 @@ void tetgenmesh::reconstructmesh()
             if (b->verbose > 1) {
               printf("Warning:  Searching segment #%d [%d,%d] mark=%d.\n",
                 i + in->firstnumber, pointmark(p[0]), pointmark(p[1]), marker);
+              std::cout << std::flush;
             }
             // Search it globally.
             if (search_edge(p[0], p[1], checktet)) {
@@ -24244,10 +24381,13 @@ void tetgenmesh::interpolatemeshsize()
 
   if (b->verbose) {
     printf("  Interoplated %d points.\n", count);
+    std::cout << std::flush;
     if (nonregularcount > 0l) {
       printf("  Performed %ld brute-force searches.\n", nonregularcount);
+      std::cout << std::flush;
     }
     printf("  Size rangle [%.17g, %.17g].\n", minval, maxval);
+    std::cout << std::flush;
   }
 
   bgm->samples = baksmaples;
@@ -24277,15 +24417,18 @@ void tetgenmesh::insertconstrainedpoints(point *insertarray, int arylen,
 
   if (b->verbose) {
     printf("  Inserting %d constrained points\n", arylen);
+    std::cout << std::flush;
   }
 
   if (b->no_sort) { // -b/1 option.
     if (b->verbose) {
       printf("  Using the input order.\n"); 
+      std::cout << std::flush;
     }
   } else {
     if (b->verbose) {
       printf("  Permuting vertices.\n"); 
+      std::cout << std::flush;
     }
     point swappoint;
     int randindex;
@@ -24298,7 +24441,8 @@ void tetgenmesh::insertconstrainedpoints(point *insertarray, int arylen,
     }
     if (b->brio_hilbert) { // -b1 option
       if (b->verbose) {
-        printf("  Sorting vertices.\n"); 
+        printf("  Sorting vertices.\n");
+        std::cout << std::flush;
       }
       hilbert_init(in->mesh_dim);
       int ngroup = 0; 
@@ -24415,8 +24559,10 @@ void tetgenmesh::insertconstrainedpoints(point *insertarray, int arylen,
            (bak_seg_count + bak_fac_count + bak_vol_count),
            st_segref_count - bak_seg_count, st_facref_count - bak_fac_count,
            st_volref_count - bak_vol_count);
+    std::cout << std::flush;
     if (nonregularcount > 0l) {
       printf("  Performed %ld brute-force searches.\n", nonregularcount);
+      std::cout << std::flush;
     }
   }
 
@@ -24451,6 +24597,7 @@ void tetgenmesh::insertconstrainedpoints(tetgenio *addio)
       if (b->verbose) {
         printf("Warning:  Point #%d lies outside the bounding box. Ignored\n",
                i + in->firstnumber);
+        std::cout << std::flush;
       }
       continue;
     }
@@ -24548,6 +24695,7 @@ void tetgenmesh::collectremovepoints(arraypool *remptlist)
     }
     if (b->verbose > 1) {
       printf("    Coarsen %ld oversized points.\n", remptlist->objects); 
+      std::cout << std::flush;
     }
   }
 
@@ -24573,6 +24721,7 @@ void tetgenmesh::collectremovepoints(arraypool *remptlist)
     }
     if (b->verbose > 1) {
       printf("    Coarsen %ld marked points.\n", remptlist->objects - bak_count); 
+      std::cout << std::flush;
     }
   } // if (in->pointmarkerlist != NULL)
 
@@ -24581,6 +24730,7 @@ void tetgenmesh::collectremovepoints(arraypool *remptlist)
     if (b->verbose > 1) {
       printf("    Coarsen %g percent of interior points.\n", 
              b->coarsen_percent * 100.0);
+      std::cout << std::flush;
     }
     arraypool *intptlist = new arraypool(sizeof(point *), 10);
     // Count the total number of interior points.
@@ -24650,6 +24800,7 @@ void tetgenmesh::meshcoarsening()
   if (b->verbose) {
     if (remptlist->objects > 0l) {
       printf("  Removing %ld points...\n", remptlist->objects);
+      std::cout << std::flush;
     }
   }
 
@@ -24668,6 +24819,7 @@ void tetgenmesh::meshcoarsening()
              (b->fliplinklevel > 0) ? "fixed" : "auto",
              (b->fliplinklevel > 0) ? b->fliplinklevel : autofliplinklevel,
              remptlist->objects);
+      std::cout << std::flush;
     }
 
     // Remove the list of points.
@@ -24708,6 +24860,7 @@ void tetgenmesh::meshcoarsening()
   if (remptlist->objects > 0l) {
     if (b->verbose) {
       printf("  %ld points are not removed !\n", remptlist->objects);
+      std::cout << std::flush;
     }
   }
 
@@ -24743,6 +24896,7 @@ void tetgenmesh::makefacetverticesmap()
 
   if (b->verbose) {
     printf("  Creating the facet vertices map.\n");
+    std::cout << std::flush;
   }
 
   facetvertexlist = new arraypool(sizeof(arraypool *), 10);
@@ -24815,6 +24969,7 @@ void tetgenmesh::makefacetverticesmap()
 
   if (b->verbose) {
     printf("  Found %ld facets.\n", facetvertexlist->objects);
+    std::cout << std::flush;
   }
 
   idx2facetlist = new int[facetindex + 1];
@@ -25338,6 +25493,7 @@ void tetgenmesh::repairencsegs(int chkencflag)
   if (badsubsegs->items > 0) {
     if (b->verbose) {
       printf("The desired number of Steiner points is reached.\n");
+      std::cout << std::flush;
     }
     badsubsegs->traversalinit();
     bface = (face *) badsubsegs->traverse();
@@ -25838,6 +25994,7 @@ void tetgenmesh::repairencfacs(int chkencflag)
     if (steinerleft == 0) {
       if (b->verbose) {
         printf("The desired number of Steiner points is reached.\n");
+        std::cout << std::flush;
       }
     } else {
       terminatetetgen(this, 2);
@@ -26141,6 +26298,7 @@ int tetgenmesh::splittetrahedron(triface* splittet, int qflag, REAL *ccent,
 // iffalse
     if (b->verbose > 2) {
       printf("    New point %d is blocked by a polygon.\n", pointmark(newpt));
+      std::cout << std::flush;
     }
 // \fi
     pointdealloc(newpt);  // Do not insert this vertex.
@@ -26330,6 +26488,7 @@ void tetgenmesh::repairbadtets(int chkencflag)
     if (steinerleft == 0) {
       if (b->verbose) {
         printf("The desired number of Steiner points is reached.\n");
+        std::cout << std::flush;
       }
     } else {
       terminatetetgen(this, 2); // Unknown case.
@@ -26377,6 +26536,7 @@ void tetgenmesh::delaunayrefinement()
   if (b->verbose) {
     printf("  Min radius-edge ratio = %g.\n", b->minratio);
     printf("  Min dihedral   angle  = %g.\n", b->mindihedral);
+    std::cout << std::flush;
     //printf("  Min Edge length = %g.\n", b->minedgelength);
   }
 
@@ -26412,6 +26572,7 @@ void tetgenmesh::delaunayrefinement()
   if (!b->nobisect || checkconstraints) {
     if (b->verbose) {
       printf("  Splitting encroached subsegments.\n");
+      std::cout << std::flush;
     }
 
     chkencflag = 1; // Only check encroaching subsegments.
@@ -26439,6 +26600,7 @@ void tetgenmesh::delaunayrefinement()
     if (b->reflevel > 1) { // '-D2' option
       if (b->verbose) {
         printf("  Splitting encroached subfaces.\n");
+        std::cout << std::flush;
       }
 
       chkencflag = 2; // Only check encroaching subfaces.
@@ -26472,6 +26634,7 @@ void tetgenmesh::delaunayrefinement()
   if (b->reflevel > 2) { // '-D3' option (The default option)
     if (b->verbose) {
       printf("  Splitting bad quality tets.\n");
+      std::cout << std::flush;
     }
 
     chkencflag = 4; // Only check tetrahedra.
@@ -26503,6 +26666,7 @@ void tetgenmesh::delaunayrefinement()
              st_segref_count - bak_segref_count,
              st_facref_count - bak_facref_count,
              st_volref_count - bak_volref_count);
+      std::cout << std::flush;
     }
   } // if (b->reflevel > 2)
 
@@ -26510,6 +26674,7 @@ void tetgenmesh::delaunayrefinement()
     if (flip23count + flip32count + flip44count > bak_flipcount) {
       printf("  Performed %ld flips.\n", flip23count + flip32count +
              flip44count - bak_flipcount);
+      std::cout << std::flush;
     }
   }
 
@@ -26576,6 +26741,7 @@ long tetgenmesh::lawsonflip3d(flipconstraints *fc)
 
     if (b->verbose > 2) {
       printf("      Lawson flip %ld faces.\n", flippool->items);
+      std::cout << std::flush;
     }
     flipcount = 0l;
 
@@ -26800,6 +26966,7 @@ long tetgenmesh::lawsonflip3d(flipconstraints *fc)
     if (b->verbose > 2) {
       if (flipcount > 0) {
         printf("      Performed %ld flips.\n", flipcount);
+        std::cout << std::flush;
       }
     }
     // Accumulate the counter of flips.
@@ -26827,12 +26994,15 @@ long tetgenmesh::lawsonflip3d(flipconstraints *fc)
   if (b->verbose > 2) {
     if (totalcount > 0) {
       printf("      Performed %ld flips.\n", totalcount);
+      std::cout << std::flush;
     }
     if (sliver_peels > 0) {
       printf("      Removed %ld hull slivers.\n", sliver_peels);
+      std::cout << std::flush;
     }
     if (unflipqueue->objects > 0l) {
       printf("      %ld unflippable edges remained.\n", unflipqueue->objects);
+      std::cout << std::flush;
     }
   }
 
@@ -26881,10 +27051,12 @@ void tetgenmesh::recoverdelaunay()
 
   if (b->verbose) {
     printf("  Initial obj = %.17g\n", tetprism_vol_sum);
+    std::cout << std::flush;
   }
 
   if (b->verbose > 1) {
     printf("    Recover Delaunay [Lawson] : %ld\n", flippool->items);
+    std::cout << std::flush;
   }
 
   // First only use the basic Lawson's flip.
@@ -26895,6 +27067,7 @@ void tetgenmesh::recoverdelaunay()
 
   if (b->verbose > 1) {
     printf("    obj (after Lawson) = %.17g\n", tetprism_vol_sum);
+    std::cout << std::flush;
   }
 
   if (unflipqueue->objects == 0l) {
@@ -26925,6 +27098,7 @@ void tetgenmesh::recoverdelaunay()
     if (b->verbose > 1) {
       printf("    Recover Delaunay [level = %2d] #:  %ld.\n",
              autofliplinklevel, flipqueue->objects);
+      std::cout << std::flush;
     }
 
     for (i = 0; i < flipqueue->objects; i++) {
@@ -26975,6 +27149,7 @@ void tetgenmesh::recoverdelaunay()
     if (b->verbose > 1) {
       printf("    obj (after level %d) = %.17g.\n", autofliplinklevel,
              tetprism_vol_sum);
+      std::cout << std::flush;
     }
     flipqueue->restart();
 
@@ -26996,11 +27171,13 @@ void tetgenmesh::recoverdelaunay()
   if (flipqueue->objects > 0l) {
     if (b->verbose > 1) {
       printf("    %ld non-Delaunay edges remained.\n", flipqueue->objects);
+      std::cout << std::flush;
     }
   }
 
   if (b->verbose) {
     printf("  Final obj  = %.17g\n", tetprism_vol_sum);
+    std::cout << std::flush;
   }
 
   b->flipstarsize = bakmaxflipstarsize;
@@ -27097,6 +27274,7 @@ long tetgenmesh::improvequalitybyflips()
       if (b->verbose > 1) {
         printf("    Improving mesh qualiy by flips [%d]#:  %ld.\n",
                autofliplinklevel, flipqueue->objects);
+        std::cout << std::flush;
       }
 
       for (k = 0; k < flipqueue->objects; k++) {
@@ -27186,6 +27364,7 @@ long tetgenmesh::improvequalitybyflips()
 
     if (b->verbose > 1) {
       printf("    Removed %ld bad tets.\n", remcount);
+      std::cout << std::flush;
     }
     totalremcount += remcount;
 
@@ -27428,6 +27607,7 @@ long tetgenmesh::improvequalitybysmoothing(optparameters *opm)
     if (b->verbose > 1) {
       printf("    Improving mesh quality by smoothing [%d]#:  %ld.\n",
              iter, flipqueue->objects);
+      std::cout << std::flush;
     }
 
     for (k = 0; k < flipqueue->objects; k++) {      
@@ -27516,6 +27696,7 @@ long tetgenmesh::improvequalitybysmoothing(optparameters *opm)
 
     if (b->verbose > 1) {
       printf("    Smooth %ld points.\n", smtcount);
+      std::cout << std::flush;
     }
     totalsmtcount += smtcount;
 
@@ -27706,6 +27887,7 @@ long tetgenmesh::removeslivers(int chkencflag)
     if (b->verbose > 1) {
       printf("    Splitting bad quality tets [%d]#:  %ld.\n",
              iter, flipqueue->objects);
+      std::cout << std::flush;
     }
 
     for (k = 0; (k < flipqueue->objects) && (steinerleft != 0); k++) {      
@@ -27772,6 +27954,7 @@ long tetgenmesh::removeslivers(int chkencflag)
 
     if (b->verbose > 1) {
       printf("    Split %ld tets.\n", sptcount);
+      std::cout << std::flush;
     }
     totalsptcount += sptcount;
 
@@ -27828,6 +28011,7 @@ void tetgenmesh::optimizemesh()
     printf("  Optimization scheme = %d.\n", b->optscheme);
     printf("  Number of iteration = %d.\n", optpasses);
     printf("  Min_Max dihed angle = %g.\n", b->optmaxdihedral);
+    std::cout << std::flush;
   }
 
   totalsmtcount = totalsptcount = totalremcount = 0l;
@@ -27923,6 +28107,7 @@ void tetgenmesh::optimizemesh()
   if (unflipqueue->objects > 0l) {
     if (b->verbose > 1) {
       printf("    %ld bad tets remained.\n", unflipqueue->objects);
+      std::cout << std::flush;
     }
     unflipqueue->restart();
   }
@@ -27930,12 +28115,15 @@ void tetgenmesh::optimizemesh()
   if (b->verbose) {
     if (totalremcount > 0l) {
       printf("  Removed %ld edges.\n", totalremcount);
+      std::cout << std::flush;
     }
     if (totalsmtcount > 0l) {
       printf("  Smoothed %ld points.\n", totalsmtcount);
+      std::cout << std::flush;
     }
     if (totalsptcount > 0l) {
       printf("  Split %ld slivers.\n", totalsptcount);
+      std::cout << std::flush;
     }
   }
 }
@@ -29471,10 +29659,12 @@ void tetgenmesh::statistics()
     if (b->plc || b->refine) { // -p or -r
       if (tetrahedrons->items > 0l) {
         qualitystatistics();
+        std::cout << std::flush;
       }
     }
     if (tetrahedrons->items > 0l) {
       memorystatistics();
+      std::cout << std::flush;
     }
   }
 }
@@ -29538,6 +29728,7 @@ void tetgenmesh::jettisonnodes()
   if (b->verbose) {
     printf("  %ld duplicated vertices are removed.\n", dupverts);
     printf("  %ld unused vertices are removed.\n", unuverts);
+    std::cout << std::flush;
   }
   dupverts = 0l;
   unuverts = 0l;
@@ -32149,6 +32340,7 @@ void tetrahedralize(tetgenbehavior *b, tetgenio *in, tetgenio *out,
       printf("Delaunay seconds:  %g\n", ((REAL)(tv[2]-tv[1])) / cps);
       if (b->verbose) {
         printf("  Point sorting seconds:  %g\n", ((REAL)(ts[0]-tv[1])) / cps);
+        std::cout << std::flush;
 
       }
     }
@@ -32229,6 +32421,7 @@ void tetrahedralize(tetgenbehavior *b, tetgenio *in, tetgenio *out,
       if (b->verbose) {
         printf("  Segment recovery seconds:  %g\n",((REAL)(ts[0]-tv[4]))/ cps);
         printf("  Facet recovery seconds:  %g\n", ((REAL)(ts[1]-ts[0])) / cps);
+        std::cout << std::flush;
       }
     }
 

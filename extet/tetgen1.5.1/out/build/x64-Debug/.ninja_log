@@ -1,0 +1,18 @@
+# ninja log v5
+573	1460	601841117	CMakeFiles/tet.dir/predicates.cxx.obj	547a05b8bc6da3e4
+1	1467	601841117	CMakeFiles/tetgen.dir/predicates.cxx.obj	c7795fdd5f85514d
+1	1611	601841174	CMakeFiles/tetgen.dir/tetgen.cxx.obj	18500e798261ad2f
+215	1720	601841174	CMakeFiles/tet.dir/tetgen.cxx.obj	1658bc5a40deddc8
+1727	2919	601841176	tet.lib	205e104c706f895f
+1628	10112	601841183	tetgen.exe	50c44daf3f096a22
+208	2266	601844761	CMakeFiles/tet.dir/tetgen.cxx.obj	1658bc5a40deddc8
+0	2387	601844761	CMakeFiles/tetgen.dir/tetgen.cxx.obj	18500e798261ad2f
+2275	3625	601844763	tet.lib	205e104c706f895f
+2409	6608	601844765	tetgen.exe	50c44daf3f096a22
+0	138	0	clean	b049eaf95b698d8c
+536	1447	601844805	CMakeFiles/tet.dir/predicates.cxx.obj	547a05b8bc6da3e4
+0	1569	601844805	CMakeFiles/tetgen.dir/predicates.cxx.obj	c7795fdd5f85514d
+178	1663	601844805	CMakeFiles/tetgen.dir/tetgen.cxx.obj	18500e798261ad2f
+367	1759	601844805	CMakeFiles/tet.dir/tetgen.cxx.obj	1658bc5a40deddc8
+1768	2865	601844806	tet.lib	205e104c706f895f
+1672	5388	601844808	tetgen.exe	50c44daf3f096a22
